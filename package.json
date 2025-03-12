@@ -2,5 +2,5 @@
   "name": "zoom",
   "version": "1.0.0",
   "license": "MIT",
-  "description": ""
+  "description": "Zoom Clone using WebRTC and Websockets"
 }
