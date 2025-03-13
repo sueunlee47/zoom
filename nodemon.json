@@ -1,3 +1,6 @@
 {
-    "exec": "bebel-node src/server.js"
-}
+    "watch": ["src"],
+    "ext": "ts",
+    "ignore": ["src/**/*.spec.ts"],
+    "exec": "ts-node ./src/server.ts"
+  }
