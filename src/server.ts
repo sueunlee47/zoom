@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'path';
 
 const app = express();
 const PORT = 3000;
@@ -7,7 +8,7 @@ const PORT = 3000;
 app.set('view engine', 'pug');
 
 // 템플릿이 있는 디렉토리 설정
-app.set('views', __dirname + '/views');
+app.set('views', path.join(__dirname, 'views'));
 
 app.get('/', (req, res) => {
   // 템플릿이 있는 곳(src/views)의 home 으로 렌더해줌
