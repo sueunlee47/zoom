@@ -24,6 +24,11 @@ app.get('/', (req, res) => {
   res.render("home")
 });
 
+// "/" 페이지 외 다른 경로로 페이지 접근 시, redirect 해줌
+app.get("/*", (req, res) => {
+  res.redirect("/")
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
