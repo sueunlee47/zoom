@@ -3,8 +3,16 @@ import express from 'express';
 const app = express();
 const PORT = 3000;
 
+// 템플릿 엔진 - view engine 을 PUG 로 설정
+app.set('view engine', 'pug');
+
+// 템플릿이 있는 디렉토리 설정
+app.set('views', __dirname + '/views');
+
 app.get('/', (req, res) => {
-  res.send('Hello, TypeScript with Express!');
+  // 템플릿이 있는 곳(src/views)의 home 으로 렌더해줌
+  // Rendering HTML views 명령어가  render임
+  res.render("home")
 });
 
 app.listen(PORT, () => {
