@@ -1,5 +1,7 @@
 import express from 'express';
 import path from 'path';
+import { WebSocketServer } from 'ws';
+import { createServer } from 'http';
 
 const app = express();
 const PORT = 3000;
@@ -29,6 +31,25 @@ app.get("/*", (req, res) => {
   res.redirect("/")
 });
 
-app.listen(PORT, () => {
+const server = createServer(app);
+const ws = new WebSocketServer({ server });
+
+ws.on('connection', (socket) => {
+  console.log(`Connected to Browser`);
+
+  socket.on("message", (msg) => {
+    console.log(`New Meesage: ${msg}`);
+  });
+
+  socket.on("close", () => {
+    console.log(`Disconnected from Browser`);
+  })
+
+  socket.send("Hello Browser, This is server ")
+
+});
+
+server.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
