@@ -1,15 +1,14 @@
-const socket = new WebSocket(`ws://${window.location.host}`);
+const socket = io();
 
-socket.addEventListener("open", () => {
+socket.on("connect", () => {
     console.log(`Connected to Server`);
 })
 
-socket.addEventListener("message", (message) => {
-    console.log(`New message: ${message.data}`)
+socket.on("message", (message) => {
+    console.log(`New message: ${message}`)
 })
 
-socket.addEventListener("close", () => {
+socket.on("disconnect", () => {
     console.log(`Disconnected from Server`);
 })
-
-setTimeout(() => {socket.send("This is a message from the Browser")}, 3000)
+socket.emit("message", "This is a message from the Browser");

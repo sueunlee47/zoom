@@ -1,7 +1,7 @@
 import express from 'express';
 import path from 'path';
-import { WebSocketServer } from 'ws';
 import { createServer } from 'http';
+import { Server, Socket } from "socket.io";
 
 const app = express();
 const PORT = 3000;
@@ -32,20 +32,23 @@ app.get("/*", (req, res) => {
 });
 
 const server = createServer(app);
-const ws = new WebSocketServer({ server });
 
-ws.on('connection', (socket) => {
+const io = new Server(server, {
+  // options
+});
+
+io.on('connection', (socket: Socket) => {
   console.log(`Connected to Browser`);
 
-  socket.on("message", (msg) => {
+  socket.on("message", (msg: string) => {
     console.log(`New Meesage: ${msg}`);
-  });
+  })
 
-  socket.on("close", () => {
+  socket.on("disconnecting", () => {
     console.log(`Disconnected from Browser`);
   })
 
-  socket.send("Hello Browser, This is server ")
+  socket.emit("message", "Hello Browser, This is server ")
 
 });
 
