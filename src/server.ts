@@ -38,18 +38,20 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket: Socket) => {
-  console.log(`Connected to Browser`);
-
-  socket.on("message", (msg: string) => {
-    console.log(`New Meesage: ${msg}`);
-  })
-
   socket.on("disconnecting", () => {
-    console.log(`Disconnected from Browser`);
+    socket.rooms.forEach((room) => socket.to(room).emit("bye"))
   })
 
-  socket.emit("message", "Hello Browser, This is server ")
+  socket.on("enter_room", (roomName: string, done: () => void) => {
+    socket.join(roomName);
+    socket.to(roomName).emit("welcome");
+    done();
+  })
 
+  socket.on("new_message", (roomName: string, message: string, done: () => void) => {
+    socket.to(roomName).emit("new_message", message);
+    done();
+  })
 });
 
 server.listen(PORT, () => {

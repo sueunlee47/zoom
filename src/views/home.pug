@@ -10,7 +10,17 @@ html(lang="en")
         header
             h1 Zoom
         main
-            h2 Welcome to Zoom
+            div#room
+                form
+                    input(type="text", placeholder="room name", requried)
+                    button Enter Room
+            div#chat
+                h3
+                ul 
+                form
+                    input(type="text", placeholder="message", requried)
+                    button Send
+
         //- TODO 정적파일 js 를 ts 로 사용가능한지 확인 후 변경 예정
         script(src="/socket.io/socket.io.js") 
         script(src="/public/js/app.js") 
