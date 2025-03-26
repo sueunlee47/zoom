@@ -3,6 +3,10 @@ import path from 'path';
 import { createServer } from 'http';
 import { Server, Socket } from "socket.io";
 
+class SocketCustom extends Socket {
+  nickname?: string;
+}
+
 const app = express();
 const PORT = 3000;
 
@@ -37,19 +41,39 @@ const io = new Server(server, {
   // options
 });
 
-io.on('connection', (socket: Socket) => {
-  console.log(`Connected to Browser`);
+function publicRooms() {
+  const rooms = [...io.sockets.adapter.rooms.keys()];
+  const sids = [...io.sockets.adapter.sids.keys()];
 
-  socket.on("message", (msg: string) => {
-    console.log(`New Meesage: ${msg}`);
-  })
+  const publicRooms = rooms.filter(v => !sids.includes(v));
+  return publicRooms;
+}
 
+io.on('connection', (socket: SocketCustom) => {
   socket.on("disconnecting", () => {
-    console.log(`Disconnected from Browser`);
+    socket.rooms.forEach((room) => socket.to(room).emit("bye", socket.nickname))
   })
 
-  socket.emit("message", "Hello Browser, This is server ")
+  socket.on("disconnect", () => {
+    io.sockets.emit("room_change", publicRooms())
+  })
 
+  socket.on("nickname", (nickname: string, done: () => void) => {
+    socket.nickname = nickname;
+    done();
+  })
+
+  socket.on("enter_room", (roomName: string, done: () => void) => {
+    socket.join(roomName);
+    socket.to(roomName).emit("welcome", socket.nickname);
+    io.sockets.emit("room_change", publicRooms())
+    done();
+  })
+
+  socket.on("new_message", (roomName: string, message: string, done: () => void) => {
+    socket.to(roomName).emit("new_message", `${socket.nickname}: ${message}`);
+    done();
+  })
 });
 
 server.listen(PORT, () => {
