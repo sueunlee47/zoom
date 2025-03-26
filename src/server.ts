@@ -41,9 +41,21 @@ const io = new Server(server, {
   // options
 });
 
+function publicRooms() {
+  const rooms = [...io.sockets.adapter.rooms.keys()];
+  const sids = [...io.sockets.adapter.sids.keys()];
+
+  const publicRooms = rooms.filter(v => !sids.includes(v));
+  return publicRooms;
+}
+
 io.on('connection', (socket: SocketCustom) => {
   socket.on("disconnecting", () => {
     socket.rooms.forEach((room) => socket.to(room).emit("bye", socket.nickname))
+  })
+
+  socket.on("disconnect", () => {
+    io.sockets.emit("room_change", publicRooms())
   })
 
   socket.on("nickname", (nickname: string, done: () => void) => {
@@ -54,6 +66,7 @@ io.on('connection', (socket: SocketCustom) => {
   socket.on("enter_room", (roomName: string, done: () => void) => {
     socket.join(roomName);
     socket.to(roomName).emit("welcome", socket.nickname);
+    io.sockets.emit("room_change", publicRooms())
     done();
   })
 

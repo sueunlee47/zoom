@@ -12,6 +12,15 @@ socket.on("bye", (nickname) => {
     addMessage(`${nickname} left`);
 });
 
+socket.on("room_change", (publicRooms) => {
+    const ul = room.querySelector("ul");
+    publicRooms.map(room => {
+        const li = document.createElement("li");
+        li.innerText = room;
+        ul.appendChild(li);
+    })
+});
+
 const user = document.getElementById("user");
 const room = document.getElementById("room");
 const chat = document.getElementById("chat");
