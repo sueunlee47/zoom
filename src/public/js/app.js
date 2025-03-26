@@ -4,23 +4,40 @@ socket.on("new_message", (message) => {
     addMessage(message);
 });
 
-socket.on("welcome", () => {
-    addMessage("someone joined!");
+socket.on("welcome", (nickname) => {
+    addMessage(`${nickname} joined!`);
 });
 
-socket.on("bye", () => {
-    addMessage("someone left");
+socket.on("bye", (nickname) => {
+    addMessage(`${nickname} left`);
 });
 
+const user = document.getElementById("user");
 const room = document.getElementById("room");
 const chat = document.getElementById("chat");
+room.hidden = true;
 chat.hidden = true;
+
+const userFrom = user.querySelector("form");
+userFrom.addEventListener("submit", handleUserSubmit)
 
 const roomForm = room.querySelector("form");
 roomForm.addEventListener("submit", handleRoomSubmit)
 
 const chatForm = chat.querySelector("form");
 chatForm.addEventListener("submit", handleChatSubmit)
+
+let nickname;
+function handleUserSubmit(event) {
+    event.preventDefault();
+    const input = user.querySelector("input")
+    nickname = input.value;
+
+    socket.emit("nickname", nickname, () => {
+        user.hidden = true;
+        room.hidden = false;
+    });
+}
 
 let roomName;
 function handleRoomSubmit(event) {
