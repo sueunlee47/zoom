@@ -2,6 +2,7 @@ import express from 'express';
 import path from 'path';
 import { createServer } from 'http';
 import { Server, Socket } from "socket.io";
+import { instrument } from "@socket.io/admin-ui";
 
 class SocketCustom extends Socket {
   nickname?: string;
@@ -38,7 +39,14 @@ app.get("/*", (req, res) => {
 const server = createServer(app);
 
 const io = new Server(server, {
-  // options
+  cors: {
+    origin: ["https://admin.socket.io"],
+    credentials: true,
+  },
+});
+
+instrument(io, {
+  auth: false,
 });
 
 function publicRooms() {
